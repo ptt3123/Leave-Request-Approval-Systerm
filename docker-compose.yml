@@ -1,0 +1,19 @@
+services:
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    restart: always
+    ports:
+      - "8080:8080"
+#    expose:
+#      - "8080"
+    environment:
+      JWT_EXPIRATION_TIME_BY_SECOND: ${JWT_EXPIRATION_TIME_BY_SECOND}
+    networks:
+      - approval-service
+
+networks:
+  approval-service:
+    driver: bridge
