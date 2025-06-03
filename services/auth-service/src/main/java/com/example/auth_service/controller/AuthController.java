@@ -22,11 +22,7 @@ public class AuthController {
     public APIResponse<String> getJWT(
             @RequestBody JWTData jwtData
     ) {
-        return APIResponse.<String>builder()
-                .code(200)
-                .detail("success!")
-                .data(authService.generateJWT(jwtData))
-                .build();
+        return APIResponse.success(authService.generateJWT(jwtData));
     }
 
 }
