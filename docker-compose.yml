@@ -20,10 +20,10 @@ services:
       dockerfile: Dockerfile
     container_name: employee-service
     restart: always
-      #    ports:
-      #      - "8081:8080"
-    expose:
-      - "8080"
+    ports:
+      - "8081:8080"
+#    expose:
+#      - "8080"
     depends_on:
       - employee-service-db
       - auth-service
