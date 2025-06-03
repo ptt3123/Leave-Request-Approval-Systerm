@@ -10,8 +10,7 @@ import java.time.LocalDate;
 @Table(name = "employee")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 public class Employee {
 
     @Id
@@ -32,9 +31,6 @@ public class Employee {
 
     @Column(nullable = false)
     private LocalDate create_at;
-
-    @Column(nullable = true)
-    private LocalDate update_at;
 
     @Column(nullable = false, unique = true, length = 10)
     private String phone_number;
