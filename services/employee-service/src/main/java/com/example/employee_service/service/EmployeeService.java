@@ -1,5 +1,12 @@
 package com.example.employee_service.service;
 
+import com.example.employee_service.dto.EmployeeLoginDTO;
+import com.example.employee_service.dto.EmployeeRegisterDTO;
+
 public interface EmployeeService {
-    public String login(String username, String password);
+
+    String login(EmployeeLoginDTO employeeLoginDTO);
+
+    void register(EmployeeRegisterDTO employeeRegisterDTO);
+
 }
