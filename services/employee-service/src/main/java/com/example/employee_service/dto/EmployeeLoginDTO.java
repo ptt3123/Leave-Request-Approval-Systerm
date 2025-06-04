@@ -8,7 +8,7 @@ import lombok.Value;
 public class EmployeeLoginDTO {
 
     @NotBlank(message = "Username is required")
-    @Size(min = 6, max = 15, message = "Username must not smaller than 6 and greater than 15 character!")
+    @Size(min = 4, max = 15, message = "Username must not smaller than 4 and greater than 15 character!")
     String username;
 
     @NotBlank(message = "Password is required")

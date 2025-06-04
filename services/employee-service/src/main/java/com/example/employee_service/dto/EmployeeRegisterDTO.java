@@ -13,7 +13,7 @@ public class EmployeeRegisterDTO {
     String name;
 
     @NotBlank(message = "Username is required")
-    @Size(min = 6, max = 15, message = "Username must not smaller than 6 and greater than 15 character!")
+    @Size(min = 4, max = 15, message = "Username must not smaller than 4 and greater than 15 character!")
     String username;
 
     @NotBlank(message = "Password is required")
@@ -21,7 +21,7 @@ public class EmployeeRegisterDTO {
     String password;
 
     @NotBlank(message = "Confirm Password is required")
-    String confirmPassword;
+    String confirm_password;
 
     @NotNull(message = "Date of birth is required")
     LocalDate DOB;
@@ -47,10 +47,13 @@ public class EmployeeRegisterDTO {
     @Min(value = 1, message = "Team Id not smaller than 1!")
     Integer team_id;
 
+    @NotNull(message = "Is Manager is required")
+    Boolean is_manager;
+
     @AssertTrue(message = "Passwords do not match")
     public boolean isPasswordConfirmed() {
-        if (password == null || confirmPassword == null) return false;
-        return password.equals(confirmPassword);
+        if (password == null || confirm_password == null) return false;
+        return password.equals(confirm_password);
     }
 
 }
