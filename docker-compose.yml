@@ -1,5 +1,18 @@
 services:
 
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: gateway
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - employee-service
+    networks:
+      - approval-service
+
   employee-service-db:
     image: mysql:8
     container_name: employee_service_db
@@ -20,10 +33,8 @@ services:
       dockerfile: Dockerfile
     container_name: employee-service
     restart: always
-    ports:
-      - "8081:8080"
-#    expose:
-#      - "8080"
+    expose:
+      - "8080"
     depends_on:
       - employee-service-db
       - auth-service
@@ -40,8 +51,6 @@ services:
       dockerfile: Dockerfile
     container_name: auth-service
     restart: always
-#    ports:
-#      - "8080:8080"
     expose:
       - "8080"
     environment:
