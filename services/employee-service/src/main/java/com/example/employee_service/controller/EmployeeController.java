@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/e")
 public class EmployeeController {
 
     @Autowired

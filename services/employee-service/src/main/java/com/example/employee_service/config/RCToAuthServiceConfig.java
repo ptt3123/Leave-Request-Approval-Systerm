@@ -10,7 +10,7 @@ public class RCToAuthServiceConfig {
     @Bean(name = "authRestClient")
     public RestClient authRestClient(RestClient.Builder builder) {
         return builder
-                .baseUrl("http://auth-service:8080/api")
+                .baseUrl("http://auth-service:8080/api/a/")
                 .build();
     }
 
