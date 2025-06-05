@@ -10,6 +10,38 @@ services:
       - "8080:8080"
     depends_on:
       - employee-service
+      - balance-service
+    networks:
+      - approval-service
+
+  balance-service-db:
+    image: mysql:8
+    container_name: balance_service_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_BALANCE_SERVICE_DB_NAME}
+    ports:
+      - "3308:3306"
+    volumes:
+      - balance_service_mysql-data:/var/lib/mysql
+    networks:
+      - approval-service
+
+  balance-service:
+    build:
+      context: ./services/balance-service
+      dockerfile: Dockerfile
+    container_name: balance-service
+    restart: always
+    expose:
+      - "8080"
+    depends_on:
+      - balance-service-db
+    environment:
+      SPRING_DATASOURCE_URL: ${MYSQL_BALANCE_SERVICE_DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
     networks:
       - approval-service
 
@@ -60,6 +92,7 @@ services:
 
 volumes:
   employee_service_mysql-data:
+  balance_service_mysql-data:
 
 networks:
   approval-service:
