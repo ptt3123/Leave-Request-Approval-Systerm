@@ -1,7 +1,13 @@
 package com.example.gateway.security.jwt;
 
-import io.jsonwebtoken.*;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -10,10 +16,10 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.Date;
 import com.example.gateway.exception.InvalidJWTException;
 
 @Component
+@Slf4j
 public class JwtValidator {
 
     @Value("${jwt.public-key-path}")
@@ -34,16 +40,35 @@ public class JwtValidator {
         publicKey = KeyFactory.getInstance("RSA").generatePublic(spec);
     }
 
-    public Claims validateToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(publicKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+    private Claims parseToken(String token){
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(publicKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
 
-        if (claims.getExpiration() == null || claims.getExpiration().before(new Date())){
-            throw new InvalidJWTException("Token expired");
-        };
+        } catch (SignatureException ex) {
+            // Token bị giả mạo - chữ ký sai
+            log.error("Invalid JWT signature", ex);
+            throw new InvalidJWTException("Invalid JWT signature");
+
+        } catch (ExpiredJwtException ex) {
+            log.error("Expired JWT token", ex);
+            throw new InvalidJWTException("Expired JWT token");
+
+        } catch (MalformedJwtException ex) {
+            log.error("Invalid JWT token format", ex);
+            throw new InvalidJWTException("Invalid JWT token format");
+
+        } catch (Exception ex) {
+            log.error("JWT token validation failed", ex);
+            throw new InvalidJWTException("JWT token validation failed");
+        }
+    }
+
+    public Claims validateToken(String token) {
+        Claims claims = parseToken(token);
 
         if (claims.get("unm", String.class) == null ||
                 claims.get("uid", Integer.class) == null ||

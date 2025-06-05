@@ -3,7 +3,6 @@ package com.example.gateway.filter;
 import com.example.gateway.exception.InvalidJWTException;
 import com.example.gateway.security.jwt.JwtValidator;
 import io.jsonwebtoken.Claims;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -20,15 +19,14 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Component
-@Slf4j
 public class JWTFilter implements GlobalFilter, Ordered {
 
     @Autowired
     private JwtValidator jwtValidator;
 
     private static final List<String> WHITELIST = List.of(
-            "/api/login",
-            "/api/register"
+            "/api/e/login",
+            "/api/e/register"
     );
 
     @Override
@@ -70,9 +68,7 @@ public class JWTFilter implements GlobalFilter, Ordered {
             return chain.filter(newExchange);
 
         } catch (InvalidJWTException e) {
-
-            log.error("Invalid or expired token: ", e);
-            return this.onError(exchange, "Invalid or expired token!", HttpStatus.UNAUTHORIZED);
+            return this.onError(exchange, "Invalid token!", HttpStatus.UNAUTHORIZED);
         }
     }
 
