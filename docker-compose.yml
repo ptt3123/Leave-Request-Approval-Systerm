@@ -77,6 +77,37 @@ services:
     networks:
       - approval-service
 
+  request-service-db:
+    image: mysql:8
+    container_name: request_service_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_EMPLOYEE_SERVICE_DB_NAME}
+    ports:
+      - "3308:3306"
+    volumes:
+      - request_service_mysql-data:/var/lib/mysql
+    networks:
+      - approval-service
+
+  request-service:
+    build:
+      context: ./services/request-service
+      dockerfile: Dockerfile
+    container_name: request-service
+    restart: always
+    expose:
+      - "8080"
+    depends_on:
+      - request-service-db
+    environment:
+      SPRING_DATASOURCE_URL: ${MYSQL_EMPLOYEE_SERVICE_DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - approval-service
+
   auth-service:
     build:
       context: ./services/auth-service
@@ -93,6 +124,7 @@ services:
 volumes:
   employee_service_mysql-data:
   balance_service_mysql-data:
+  request_service_mysql-data:
 
 networks:
   approval-service:
