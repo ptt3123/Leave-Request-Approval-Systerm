@@ -21,7 +21,7 @@ public class RequestSubmitDTO {
     @NotNull(message = "type is required")
     Type type;
 
-    @NotNull(message = "detail is required")
+    @NotBlank(message = "detail is required")
     String detail;
 
 }
