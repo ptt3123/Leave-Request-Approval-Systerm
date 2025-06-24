@@ -1,6 +1,7 @@
 package com.example.request_service.dto;
 
 import com.example.request_service.entity.Type;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Value;
 
