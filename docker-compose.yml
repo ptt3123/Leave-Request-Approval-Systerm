@@ -9,7 +9,21 @@ services:
     ports:
       - "8080:8080"
     depends_on:
+      - leave-request-service
+    networks:
+      - approval-service
+
+  leave-request-service:
+    build:
+      context: ./services/leave-request-service
+      dockerfile: Dockerfile
+    container_name: leave-request-service
+    restart: always
+    expose:
+      - "8080"
+    depends_on:
       - employee-service
+      - request-service
       - balance-service
     networks:
       - approval-service
