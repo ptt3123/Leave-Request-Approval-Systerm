@@ -25,6 +25,7 @@ services:
       - employee-service
       - request-service
       - balance-service
+      - gmail-service
     networks:
       - approval-service
 
@@ -132,6 +133,41 @@ services:
       - "8080"
     environment:
       JWT_EXPIRATION_TIME_BY_SECOND: ${JWT_EXPIRATION_TIME_BY_SECOND}
+    networks:
+      - approval-service
+
+  gmail-service:
+    build:
+      context: ./services/gmail-service
+      dockerfile: Dockerfile
+    container_name: gmail-service
+    restart: always
+    depends_on:
+      - rabbitmq
+    expose:
+      - "8080"
+    environment:
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+    networks:
+      - approval-service
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"     # Cổng giao tiếp AMQP
+      - "15672:15672"   # Cổng giao diện quản lý Web UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     networks:
       - approval-service
 
