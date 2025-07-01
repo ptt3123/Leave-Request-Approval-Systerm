@@ -21,11 +21,11 @@ services:
     restart: always
     expose:
       - "8080"
-    depends_on:
-      - employee-service
-      - request-service
-      - balance-service
-      - gmail-service
+#    depends_on:
+#      - employee-service
+#      - request-service
+#      - balance-service
+#      - gmail-service
     environment:
       RABBITMQ_HOST: ${RABBITMQ_HOST}
       RABBITMQ_PORT: ${RABBITMQ_PORT}

@@ -22,8 +22,8 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     @Autowired
     private RCToRequestService rcToRequestService;
 
-    @Autowired
-    private NotificationPublisher notificationPublisher;
+//    @Autowired
+//    private NotificationPublisher notificationPublisher;
 
     @Override
     public List<Request> readListByManagerId(Integer managerId) {
@@ -107,7 +107,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                     .build();
 
             System.out.println(message);
-            notificationPublisher.sendEmailNotification(message);
+//            notificationPublisher.sendEmailNotification(message);
 
         }
     }
