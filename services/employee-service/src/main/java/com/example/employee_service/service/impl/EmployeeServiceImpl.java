@@ -90,4 +90,20 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
     }
 
+    @Override
+    public String readEmployeeEmail(Integer employeeId) {
+        Optional<Employee> employee = employeeRepository.findById(employeeId);
+
+        if(employee.isEmpty()){
+            throw new EmployeeNotFoundException();
+        }
+
+        return employee.get().getEmail();
+    }
+
+    @Override
+    public List<Integer> readListEmployeeId(Integer managerId) {
+        return employeeRepository.findIdsByManagerId(managerId);
+    }
+
 }

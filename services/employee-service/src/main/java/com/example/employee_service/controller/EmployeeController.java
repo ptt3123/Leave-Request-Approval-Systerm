@@ -6,11 +6,10 @@ import com.example.employee_service.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/e")
@@ -34,4 +33,15 @@ public class EmployeeController {
         employeeService.register(employeeRegisterDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @GetMapping("/read-employee-email/{employeeId}")
+    public ResponseEntity<String> readEmployeeEmail(@PathVariable Integer employeeId){
+        return ResponseEntity.ok(employeeService.readEmployeeEmail(employeeId));
+    }
+
+    @GetMapping("/read-list-employee-id/{managerId}")
+    public ResponseEntity<List<Integer>> readListEmployeeId(@PathVariable Integer managerId){
+        return ResponseEntity.ok(employeeService.readListEmployeeId(managerId));
+    }
+
 }
