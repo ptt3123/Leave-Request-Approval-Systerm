@@ -19,6 +19,11 @@ public class RequestController {
     @Autowired
     private RequestService requestService;
 
+    @GetMapping("/read/{requestId}")
+    public ResponseEntity<Request> read(@PathVariable Integer requestId){
+        return ResponseEntity.ok(requestService.read(requestId));
+    }
+
     @PostMapping("create-request")
     public ResponseEntity<Void> create(@RequestBody @Valid RequestSubmitDTO requestSubmitDTO){
 
@@ -35,7 +40,7 @@ public class RequestController {
                 .body(requestService.readRequestListByEmployeeId(uid));
     }
 
-    @PostMapping("my-employee-requests")
+    @PostMapping("/read-my-employees-pending-request")
     public ResponseEntity<List<Request>> readRequestListByEmployeeIdList(
             @RequestBody List<Integer> employeeIdList){
 

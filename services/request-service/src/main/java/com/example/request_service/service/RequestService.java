@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface RequestService {
 
+    Request read(Integer requestId);
+
     void create(RequestSubmitDTO requestSubmitDTO);
 
     List<Request> readRequestListByEmployeeIdList(List<Integer> employeeIds);

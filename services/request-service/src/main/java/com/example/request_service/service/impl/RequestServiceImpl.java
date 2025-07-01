@@ -11,12 +11,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RequestServiceImpl implements RequestService {
 
     @Autowired
     private RequestRepository requestRepository;
+
+    @Override
+    public Request read(Integer requestId) {
+        Optional<Request> request = requestRepository.findById(requestId);
+
+        if (request.isEmpty()){
+            throw new  RequestNotFound();
+        }
+
+        return request.get();
+    }
 
     @Override
     public void create(RequestSubmitDTO requestSubmitDTO) {
