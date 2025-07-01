@@ -53,7 +53,7 @@ public class RequestServiceImpl implements RequestService {
 
         if (requestRepository.updateRequest(
                 updateStatusDTO.getRequestId(),
-                updateStatusDTO.getStatus().getDescription()
+                updateStatusDTO.getStatus().name()
         ) != 1 ){
             throw new RequestNotFound();
         }

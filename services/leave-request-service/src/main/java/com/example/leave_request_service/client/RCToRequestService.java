@@ -58,7 +58,7 @@ public class RCToRequestService {
 
         try {
             requestRestClient.post()
-                    .uri("createRequest")
+                    .uri("/create-request")
                     .body(requestSubmitDTO)
                     .retrieve()
                     .toEntity(Void.class);

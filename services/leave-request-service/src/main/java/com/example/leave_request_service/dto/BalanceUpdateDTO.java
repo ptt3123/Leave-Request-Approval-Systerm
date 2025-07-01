@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class BalanceUpdateDTO {
-    Integer employeeId;
-    Integer newBalance;
+    Integer employee_id;
+    Integer balance;
 }

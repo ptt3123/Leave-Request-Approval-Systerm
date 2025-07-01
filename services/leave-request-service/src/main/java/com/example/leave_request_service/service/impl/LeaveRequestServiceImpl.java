@@ -22,8 +22,8 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     @Autowired
     private RCToRequestService rcToRequestService;
 
-//    @Autowired
-//    private NotificationPublisher notificationPublisher;
+    @Autowired
+    private NotificationPublisher notificationPublisher;
 
     @Override
     public List<Request> readListByManagerId(Integer managerId) {
@@ -48,6 +48,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
             int newBalance = currentBalance - requestedDays;
 
+            System.out.println(newBalance + " " + employeeId);
             if (newBalance < 0) throw new BalanceNotEnoughException();
             else rcToBalanceService.updateBalance(employeeId, newBalance);
         }
@@ -107,7 +108,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                     .build();
 
             System.out.println(message);
-//            notificationPublisher.sendEmailNotification(message);
+            notificationPublisher.sendEmailNotification(message);
 
         }
     }
