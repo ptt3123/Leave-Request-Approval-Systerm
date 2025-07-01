@@ -26,6 +26,11 @@ services:
       - request-service
       - balance-service
       - gmail-service
+    environment:
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     networks:
       - approval-service
 
@@ -37,7 +42,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_BALANCE_SERVICE_DB_NAME}
     ports:
-      - "3308:3306"
+      - "3309:3306"
     volumes:
       - balance_service_mysql-data:/var/lib/mysql
     networks:
