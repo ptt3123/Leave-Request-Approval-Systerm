@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UpdateBalanceDTO {
+public class BalanceUpdateDTO {
     Integer employeeId;
     Integer newBalance;
 }

@@ -29,7 +29,7 @@ public class RCToRequestService {
 
         try {
             return requestRestClient.get()
-                    .uri("/read")
+                    .uri("/read/{requestId}", requestId)
                     .retrieve()
                     .toEntity(Request.class)
                     .getBody();
@@ -43,7 +43,7 @@ public class RCToRequestService {
 
         try {
             return requestRestClient.post()
-                    .uri("/readMyEmployeesRequest")
+                    .uri("/read-my-employees-pending-request")
                     .body(list)
                     .retrieve()
                     .toEntity(new ParameterizedTypeReference<List<Request>>() {})
@@ -68,11 +68,11 @@ public class RCToRequestService {
 
     }
 
-    public void updateRequest(Integer requestId, UpdateStatusDTO updateStatusDTO){
+    public void updateRequest(UpdateStatusDTO updateStatusDTO){
 
         try {
             requestRestClient.post()
-                    .uri("/updatePendingLeaveRequest/{requestId}", requestId)
+                    .uri("/update-request")
                     .body(updateStatusDTO)
                     .retrieve()
                     .toEntity(Void.class);

@@ -5,10 +5,12 @@ import com.example.leave_request_service.dto.*;
 import com.example.leave_request_service.exception.*;
 import com.example.leave_request_service.service.LeaveRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+@Service
 public class LeaveRequestServiceImpl implements LeaveRequestService {
 
     @Autowired
@@ -63,6 +65,8 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         if (status == Status.PENDING){
             throw new InvalidPendingStatusException();
         } else {
+
+            rcToRequestService.updateRequest(updateStatusDTO);
 
             Integer employeeId = request.getEmployee_id();
 

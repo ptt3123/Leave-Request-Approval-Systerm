@@ -1,6 +1,6 @@
 package com.example.leave_request_service.client;
 
-import com.example.leave_request_service.dto.UpdateBalanceDTO;
+import com.example.leave_request_service.dto.BalanceUpdateDTO;
 import com.example.leave_request_service.exception.DownstreamServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,23 +24,27 @@ public class RCToBalanceService {
 
         try {
             return balanceRestClient.get()
-                    .uri("/readBalance/{employeeId}", employeeId)
+                    .uri("/read-balance")
+                    .headers(headers -> {
+                        headers.set("X-User-Id", employeeId.toString());
+                    })
                     .retrieve()
-                    .body(Integer.class);
+                    .toEntity(Integer.class)
+                    .getBody();
         } catch (HttpClientErrorException ex) {
             throw new DownstreamServiceException(ex.getStatusCode(), ex.getResponseBodyAsString());
         }
 
     }
 
-    public Integer updateBalance(Integer employeeId, Integer newBalance) {
+    public void updateBalance(Integer employeeId, Integer newBalance) {
 
         try {
-            return balanceRestClient.post()
-                    .uri("/updateBalance")
-                    .body(new UpdateBalanceDTO(employeeId, newBalance))
+            balanceRestClient.post()
+                    .uri("/update-balance")
+                    .body(new BalanceUpdateDTO(employeeId, newBalance))
                     .retrieve()
-                    .body(Integer.class);
+                    .toEntity(Void.class);
         } catch (HttpClientErrorException ex) {
             throw new DownstreamServiceException(ex.getStatusCode(), ex.getResponseBodyAsString());
         }

@@ -26,7 +26,7 @@ public class RCToEmployeeService {
 
         try {
             return employeeRestClient.get()
-                    .uri("/readEmployeeEmail/{employeeId}", employeeId)
+                    .uri("/read-employee-email/{employeeId}", employeeId)
                     .retrieve()
                     .toEntity(String.class)
                     .getBody();
@@ -40,7 +40,7 @@ public class RCToEmployeeService {
 
         try {
             return employeeRestClient.get()
-                    .uri("/readListEmployeeIds/{managerId}", managerId)
+                    .uri("/read-list-employee-id/{managerId}", managerId)
                     .retrieve()
                     .toEntity(new ParameterizedTypeReference<List<Integer>>() {})
                     .getBody();
