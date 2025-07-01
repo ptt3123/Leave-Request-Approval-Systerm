@@ -1,10 +1,10 @@
 package com.example.balance_service.controller;
 
 import com.example.balance_service.dto.BalanceDataDTO;
+import com.example.balance_service.dto.BalanceUpdateDTO;
 import com.example.balance_service.service.BalanceService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,21 +20,21 @@ public class BalanceController {
 
         balanceService.create(balanceDataDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/update-balance")
-    public ResponseEntity<Void> updateBalance(@RequestBody @Valid BalanceDataDTO balanceDataDTO){
+    public ResponseEntity<Void> updateBalance(@RequestBody @Valid BalanceUpdateDTO balanceUpdateDTO){
 
-        balanceService.updateBalance(balanceDataDTO);
+        balanceService.updateBalance(balanceUpdateDTO);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/get-balance")
+    @GetMapping("/read-balance")
     public ResponseEntity<Integer> readBalance(@RequestHeader("X-User-Id") String userId){
 
         Integer uid = Integer.parseInt(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(balanceService.readBalance(uid));
+        return ResponseEntity.ok(balanceService.readBalance(uid));
     }
 }

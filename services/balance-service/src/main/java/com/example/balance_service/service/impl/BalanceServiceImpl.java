@@ -1,6 +1,7 @@
 package com.example.balance_service.service.impl;
 
 import com.example.balance_service.dto.BalanceDataDTO;
+import com.example.balance_service.dto.BalanceUpdateDTO;
 import com.example.balance_service.exception.*;
 import com.example.balance_service.repository.BalanceRepository;
 import com.example.balance_service.service.BalanceService;
@@ -24,10 +25,10 @@ public class BalanceServiceImpl implements BalanceService {
     }
 
     @Override
-    public void updateBalance(BalanceDataDTO balanceDataDTO) {
+    public void updateBalance(BalanceUpdateDTO balanceUpdateDTO) {
         int flag = balanceRepository.updateLeaveBalanceThisYear(
-                balanceDataDTO.getEmployee_id(),
-                balanceDataDTO.getBalance());
+                balanceUpdateDTO.getEmployee_id(),
+                balanceUpdateDTO.getBalance());
 
         if (flag == 0) {
             throw new BalanceNotFoundException();
