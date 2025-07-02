@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/r")
+@RequestMapping("/api/r")
 public class RequestController {
 
     @Autowired
@@ -24,14 +24,14 @@ public class RequestController {
         return ResponseEntity.ok(requestService.read(requestId));
     }
 
-    @PostMapping("create-request")
+    @PostMapping("/create-request")
     public ResponseEntity<Void> create(@RequestBody @Valid RequestSubmitDTO requestSubmitDTO){
 
         requestService.create(requestSubmitDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("my-requests")
+    @GetMapping("/my-requests")
     public ResponseEntity<List<Request>> readRequestListByEmployeeId(
             @RequestHeader("X-User-Id") String userId){
 
@@ -48,7 +48,7 @@ public class RequestController {
                 .body(requestService.readRequestListByEmployeeIdList(employeeIdList));
     }
 
-    @PostMapping("update-request")
+    @PostMapping("/update-request")
     public ResponseEntity<Void> updateRequest(
             @RequestBody @Valid UpdateStatusDTO updateStatusDTO){
 
