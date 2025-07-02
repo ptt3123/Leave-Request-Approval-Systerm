@@ -29,6 +29,20 @@ public class JWTFilter implements GlobalFilter, Ordered {
             "/api/e/register"
     );
 
+    private static final List<String> BLACKLIST = List.of(
+            "/api/b/update-balance",
+            "/api/r/create-request",
+            "/api/r/read-my-employees-pending-request",
+            "/api/r/update-request"
+    );
+
+    private static final List<String>  MANAGERLIST = List.of(
+            "/api/b/create-balance",
+            "/api/e/read-list-employee-id",
+            "/api/l/get-my-employee-pending-requests",
+            "/api/l/update-request-status"
+    );
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
@@ -36,6 +50,14 @@ public class JWTFilter implements GlobalFilter, Ordered {
         // Bỏ qua các public route
         if (WHITELIST.contains(path)) {
             return chain.filter(exchange);
+        }
+
+        // Chặn các private route
+        if (BLACKLIST.contains(path)) {
+            return this.onError(
+                    exchange,
+                    "Hidden route",
+                    HttpStatus.UNAUTHORIZED);
         }
 
         String authHeader = exchange.getRequest()
@@ -51,6 +73,14 @@ public class JWTFilter implements GlobalFilter, Ordered {
         String token = authHeader.substring(7);
         try {
             Claims claims = jwtValidator.validateToken(token);
+
+            // Chặn Employee truy cập manager's route
+            if (MANAGERLIST.contains(path) && Boolean.FALSE.equals(claims.get("uim"))) {
+                return this.onError(
+                        exchange,
+                        "Can't access to manager's route",
+                        HttpStatus.UNAUTHORIZED);
+            }
 
             // Gắn user info vào header mới và build lại request
             ServerHttpRequest newRequest = exchange.getRequest()
