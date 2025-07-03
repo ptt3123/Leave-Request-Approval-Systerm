@@ -6,7 +6,9 @@ import com.example.leave_request_service.exception.*;
 import com.example.leave_request_service.service.LeaveRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -39,21 +41,32 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         requestSubmitDTO.setEmployee_id(employeeId);
 
         if (requestSubmitDTO.getType().isDeductedFromAnnualLeave()){
+
             int requestedDays = (int) ChronoUnit.DAYS.between(
-                    requestSubmitDTO.getStart_at(),
-                    requestSubmitDTO.getEnd_at()
-            ) + 1;
+                    requestSubmitDTO.getStart_at(), requestSubmitDTO.getEnd_at()) + 1;
 
             Integer currentBalance = rcToBalanceService.getBalance(employeeId);
 
             int newBalance = currentBalance - requestedDays;
 
-            System.out.println(newBalance + " " + employeeId);
             if (newBalance < 0) throw new BalanceNotEnoughException();
             else rcToBalanceService.updateBalance(employeeId, newBalance);
+
+            try {
+                rcToRequestService.submitRequest(requestSubmitDTO);
+
+            } catch (DownstreamServiceException ex){
+
+                rcToBalanceService.updateBalance(employeeId, currentBalance);
+                throw ex;
+            }
+
+        } else {
+
+            rcToRequestService.submitRequest(requestSubmitDTO);
+
         }
 
-        rcToRequestService.submitRequest(requestSubmitDTO);
     }
 
     @Override
@@ -61,25 +74,18 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         
         Request request = rcToRequestService.read(updateStatusDTO.getRequestId());
 
+        Type type = request.getType();
+
         Status status = updateStatusDTO.getStatus();
 
         if (status == Status.PENDING){
             throw new InvalidPendingStatusException();
-        } else {
 
-            rcToRequestService.updateRequest(updateStatusDTO);
+        } else {
 
             Integer employeeId = request.getEmployee_id();
 
-            String content = "Your Leave Request, type " + request.getType() +
-                    " created at " + request.getCreate_at() +
-                    " start from " + request.getStart_at() +
-                    " to " + request.getEnd_at() +
-                    ", was ";
-
-            String subject = "LEAVE REQUEST ";
-
-            if (status == Status.REJECTED){
+            if (status == Status.REJECTED && type.isDeductedFromAnnualLeave()){
 
                 int requestedDays = (int) ChronoUnit.DAYS.between(
                         request.getStart_at(),
@@ -92,25 +98,48 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
                 rcToBalanceService.updateBalance(employeeId, newBalance);
 
-                subject += "REJECTED";
-                content += "REJECTED";
+                try {
+                    rcToRequestService.updateRequest(updateStatusDTO);
+
+                } catch (DownstreamServiceException ex){
+                    rcToBalanceService.updateBalance(employeeId, currentBalance);
+                    throw ex;
+                    
+                }
 
             } else {
-
-                subject += "APPROVED";
-                content += "APPROVED";
+                rcToRequestService.updateRequest(updateStatusDTO);
             }
 
-            NotifyMessage message = NotifyMessage.builder()
-                    .to(rcToEmployeeService.getEmployeeEmailById(employeeId))
-                    .subject(subject)
-                    .content(content)
-                    .build();
-
-            System.out.println(message);
-            notificationPublisher.sendEmailNotification(message);
+            notificationPublisher.sendEmailNotification(getNotifyMessage(status, request, employeeId));
 
         }
+    }
+
+    private NotifyMessage getNotifyMessage(Status status, Request request, Integer employeeId){
+        String content = "Your Leave Request, type " + request.getType() +
+                " created at " + request.getCreate_at() +
+                " start from " + request.getStart_at() +
+                " to " + request.getEnd_at() +
+                ", was ";
+
+        String subject = "LEAVE REQUEST ";
+
+        if (status == Status.REJECTED){
+            subject += "REJECTED";
+            content += "REJECTED";
+
+        } else {
+            subject += "APPROVED";
+            content += "APPROVED";
+
+        }
+
+        return NotifyMessage.builder()
+                .to(rcToEmployeeService.getEmployeeEmailById(employeeId))
+                .subject(subject)
+                .content(content)
+                .build();
     }
 
 }
